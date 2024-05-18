@@ -1,0 +1,19 @@
+#!/bin/zsh
+
+# 检查命令行参数数量
+if [ $# -ne 1 ]; then
+    echo "Usage:"
+    echo "    kdump <range>"
+    echo "eg. "
+    echo "    kdump \"2024/05/18 09:50:00 -> 2024/05/18 09:52:00\""
+    exit 1
+fi
+
+# 从命令行参数获取 range
+range="$1"
+
+conda run -n msk-data-exporter python config.py "$range" && scp conf.yaml f17:~ && \
+ssh f17 'kei export -c conf.yaml && cd /tmp && zip data.zip data.bin' && \
+scp f17:/tmp/data.zip /tmp/ && \
+cd /tmp && unzip -o data.zip && cd - &&\
+kei import -c conf.yaml
