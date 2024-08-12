@@ -20,10 +20,11 @@ SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
 
 pushd "$SCRIPT_DIR" || exit
 
-conda run -n msk-data-exporter python config.py "$range" && scp conf.yaml f17:~ && \
-ssh f17 'kei export -c conf.yaml && cd /tmp && zip data.zip data.bin' && \
-scp f17:/tmp/data.zip /tmp/ && \
-cd /tmp && unzip -o data.zip && cd - &&\
+conda run -n msk-data-exporter python config.py "$range" && scp conf.yaml pdaf:~ && \
+ssh pdaf 'kei export -c conf.yaml && cd /tmp && rm -f data.zip && zip data.zip data.bin' && \
+ssh pdaf 'ls -lh /tmp/data.zip' && \
+scp pdaf:/tmp/data.zip /tmp/ && \
+cd /tmp && rm -f data.bin && unzip -o data.zip && ls -lh /tmp/data.bin && cd - && \
 kei import -c conf.yaml
 
 popd || exit
