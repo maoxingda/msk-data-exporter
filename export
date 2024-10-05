@@ -1,16 +1,13 @@
 #!/bin/zsh
 
 # 检查命令行参数数量
-if [ $# -ne 1 ]; then
+if [ $# -lt 2 ]; then
     echo "Usage:"
-    echo "    kdump <range>"
+    echo "    kdump <start_time> <end_time> [local|sandbox] [topic_name[ topic_name]...]"
     echo "eg. "
-    echo "    kdump \"2024/05/18 09:50:00 -> 2024/05/18 09:52:00\""
+    echo "    kdump '2024/05/18 09:50:00' '2024/05/18 09:52:00' local topic1 topic2"
     exit 0
 fi
-
-# 从命令行参数获取 range
-range="$1"
 
 # 获取当前执行脚本的绝对路径
 SCRIPT_PATH=$(readlink -f "$0")
@@ -20,7 +17,7 @@ SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
 
 pushd "$SCRIPT_DIR" || exit
 
-conda run -n msk-data-exporter python config.py "$range" && scp conf.yaml pdaf:~ && \
+conda run -n msk-data-exporter python config.py "$@" && scp conf.yaml pdaf:~ && \
 ssh pdaf 'kei export -c conf.yaml && cd /tmp && rm -f data.zip && zip data.zip data.bin' && \
 ssh pdaf 'ls -lh /tmp/data.zip' && \
 scp pdaf:/tmp/data.zip /tmp/ && \

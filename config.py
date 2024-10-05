@@ -6,13 +6,25 @@ import pytz
 
 
 def main():
-    # Data to be written to the YAML file
-    start, end = sys.argv[1].split(' -> ')
+    start, end = sys.argv[1], sys.argv[2]
+    if len(sys.argv) > 3:
+        dst = sys.argv[3]
+        if dst not in ('local', 'sandbox'):
+            print("Invalid destination:", dst)
+            print("Usage: python config.py <start_time> <end_time> [local|sandbox] [topic_name[ topic_name]...]")
+            sys.exit(1)
 
-    with open('topics') as f:
-        topics = f.read()
-    topics = topics.split('\n')
-    topics = [topic for topic in topics if len(topic) > 0]
+    if len(sys.argv) > 4:
+        topics = sys.argv[4:]
+    else:
+        with open('topics') as f:
+            topics = f.read()
+        
+        topics = [
+            topic
+            for topic in topics.split('\n')
+            if len(topic) > 0
+        ]
 
     conf = {
         "exporter": {
@@ -28,7 +40,7 @@ def main():
         },
         "importer": {
             "bootstrap-servers": [
-                "kafka:9092"
+                "kafka:9092" if dst == 'local' else "b-2.bi-rdw-msk.5g8j09.c3.kafka.cn-northwest-1.amazonaws.com.cn:9092"
             ],
             "input": "/tmp/data.bin"
         }
