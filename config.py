@@ -19,7 +19,7 @@ def main():
     else:
         with open('topics') as f:
             topics = f.read()
-        
+
         topics = [
             topic
             for topic in topics.split('\n')
@@ -54,10 +54,12 @@ def main():
 
 
 def to_miliseconds(beijing_time_str):
+    year = datetime.today().date().year
+
     # 定义北京时间时区
     beijing_tz = pytz.timezone('Asia/Shanghai')
     # 将字符串解析为datetime对象
-    dt_beijing = datetime.strptime(beijing_time_str, '%Y/%m/%d %H:%M:%S')
+    dt_beijing = datetime.strptime(f'{year}{beijing_time_str}00', '%Y%m%d%H%M%S')
     # 设置时区信息为北京时间
     dt_beijing = beijing_tz.localize(dt_beijing)
     # 转换为UTC时间

@@ -5,7 +5,8 @@ if [ $# -lt 2 ]; then
     echo "Usage:"
     echo "    kdump <start_time> <end_time> [local|sandbox] [topic_name[ topic_name]...]"
     echo "eg. "
-    echo "    kdump '2024/05/18 09:50:00' '2024/05/18 09:52:00' local topic1 topic2"
+    echo "    kdump 05180950 05180952 local topic1 topic2"
+    echo "    kdump 05180950 05180952 sandbox topic1 topic2"
     exit 0
 fi
 
